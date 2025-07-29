@@ -3,9 +3,9 @@ import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
-import { ENV, CORS_CONFIG, RATE_LIMIT_CONFIG, validateConfig } from "./config/index.js";
-import chatRouter from "./routes/chat.js";
-import type { HealthCheckResponse, ApiResponse } from "./types/index.js";
+import { ENV, CORS_CONFIG, RATE_LIMIT_CONFIG, validateConfig } from "./config";
+import chatRouter from "./routes/chat";
+import type { HealthCheckResponse, ApiResponse } from "./types";
 
 // Validate configuration on startup
 validateConfig();
@@ -74,5 +74,11 @@ app.use('*', (req: Request, res: Response<ApiResponse>) => {
   res.status(404).json(notFoundResponse);
 });
 
-// Export for Vercel serverless functions
-export default app; 
+// Server start
+app.listen(ENV.PORT, () => {
+  console.log(`🚀 Server listening on http://localhost:${ENV.PORT}`);
+  console.log(`🌍 Environment: ${ENV.NODE_ENV}`);
+  console.log(`📝 TypeScript backend is running!`);
+});
+
+// NOTE: For ESM/production, you may need to use .js extensions in imports after build. 

@@ -1,7 +1,7 @@
 // config/index.ts
 import dotenv from 'dotenv';
 import { HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
-import type { SafetySetting, GenerationConfig, ModelConfig } from '../types/index.js';
+import type { SafetySetting, GenerationConfig, ModelConfig } from '../types/index.ts';
 
 dotenv.config();
 
