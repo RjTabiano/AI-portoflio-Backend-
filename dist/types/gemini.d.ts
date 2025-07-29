@@ -1,0 +1,67 @@
+import type { ChatSession, HarmCategory, HarmBlockThreshold, GenerationConfig as GeminiGenerationConfig } from '@google/generative-ai';
+export interface SafetySetting {
+    category: HarmCategory;
+    threshold: HarmBlockThreshold;
+}
+export interface GenerationConfig extends GeminiGenerationConfig {
+    temperature?: number;
+    topK?: number;
+    topP?: number;
+    maxOutputTokens?: number;
+}
+export interface ModelConfig {
+    model: string;
+    safetySettings: SafetySetting[];
+    generationConfig: GenerationConfig;
+}
+export interface ChatMessage {
+    role: 'user' | 'model' | 'assistant';
+    content: string;
+    timestamp?: Date;
+}
+export interface ChatRequest {
+    messages: ChatMessage[];
+}
+export interface ChatResponse {
+    response: string;
+    tool_call?: string;
+    timestamp: Date;
+}
+export interface ChatSessionData {
+    chat: ChatSession;
+    createdAt: Date;
+    messageCount: number;
+}
+export interface FunctionDefinition {
+    name: string;
+    description: string;
+    parameters: {
+        type: string;
+        properties: Record<string, any>;
+        required?: string[];
+    };
+}
+export interface ToolCall {
+    functionCall: {
+        name: string;
+        args: Record<string, any>;
+    };
+}
+export interface GeminiError extends Error {
+    code?: string;
+    status?: number;
+    details?: string;
+}
+export interface ApiResponse<T = any> {
+    success: boolean;
+    data?: T;
+    error?: string;
+    message?: string;
+}
+export interface HealthCheckResponse {
+    status: 'OK' | 'ERROR';
+    timestamp: string;
+    environment: string;
+    version?: string;
+}
+//# sourceMappingURL=gemini.d.ts.map
