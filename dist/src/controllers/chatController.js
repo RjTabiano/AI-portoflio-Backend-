@@ -1,5 +1,8 @@
-import { getGeminiReply } from '../services/chatService.js';
-export const sendChat = async (req, res) => {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.sendChat = void 0;
+const chatService_js_1 = require("../services/chatService.js");
+const sendChat = async (req, res) => {
     try {
         console.log('📨 Received chat request:', req.body);
         const { messages } = req.body;
@@ -9,7 +12,7 @@ export const sendChat = async (req, res) => {
             return;
         }
         console.log('🔄 Calling getGeminiReply...');
-        const result = await getGeminiReply(messages);
+        const result = await (0, chatService_js_1.getGeminiReply)(messages);
         console.log('📤 Gemini reply result:', result);
         console.log('📤 Sending response to client:', result);
         res.json(result);
@@ -19,4 +22,5 @@ export const sendChat = async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 };
+exports.sendChat = sendChat;
 //# sourceMappingURL=chatController.js.map

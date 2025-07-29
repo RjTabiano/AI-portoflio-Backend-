@@ -1,7 +1,9 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 // src/routes/chat.ts
-import { Router } from 'express';
-import { sendChat } from '../controllers/chatController.js';
-const router = Router();
-router.post('/send', sendChat);
-export default router;
+const express_1 = require("express");
+const chatController_js_1 = require("../controllers/chatController.js");
+const router = (0, express_1.Router)();
+router.post('/send', chatController_js_1.sendChat);
+exports.default = router;
 //# sourceMappingURL=chat.js.map

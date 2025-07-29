@@ -1,16 +1,19 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.sendMessageToGemini = sendMessageToGemini;
 // src/adapters/geminiAdapter.ts
-import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai';
-import { MODEL_CONFIG, ENV } from '../config/index.js';
-import { SYSTEM_PROMPT } from '../prompts/system-prompts.js';
-const genAI = new GoogleGenerativeAI(ENV.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel(MODEL_CONFIG);
+const generative_ai_1 = require("@google/generative-ai");
+const index_js_1 = require("../config/index.js");
+const system_prompts_js_1 = require("../prompts/system-prompts.js");
+const genAI = new generative_ai_1.GoogleGenerativeAI(index_js_1.ENV.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel(index_js_1.MODEL_CONFIG);
 // Function definitions for tool calls - using Gemini's format
 const functionDefinitions = [
     {
         name: 'getContact',
         description: 'This tool show my contact informations.',
         parameters: {
-            type: SchemaType.OBJECT,
+            type: generative_ai_1.SchemaType.OBJECT,
             properties: {},
             required: []
         }
@@ -19,7 +22,7 @@ const functionDefinitions = [
         name: 'getResume',
         description: 'This tool shows my resume and professional experience.',
         parameters: {
-            type: SchemaType.OBJECT,
+            type: generative_ai_1.SchemaType.OBJECT,
             properties: {},
             required: []
         }
@@ -28,7 +31,7 @@ const functionDefinitions = [
         name: 'getPresentation',
         description: 'This tool shows my detailed background and personal information.',
         parameters: {
-            type: SchemaType.OBJECT,
+            type: generative_ai_1.SchemaType.OBJECT,
             properties: {},
             required: []
         }
@@ -37,7 +40,7 @@ const functionDefinitions = [
         name: 'getSkills',
         description: 'This tool shows my technical skills and competencies.',
         parameters: {
-            type: SchemaType.OBJECT,
+            type: generative_ai_1.SchemaType.OBJECT,
             properties: {},
             required: []
         }
@@ -46,7 +49,7 @@ const functionDefinitions = [
         name: 'getSport',
         description: 'This tool shows my sports activities and fitness information.',
         parameters: {
-            type: SchemaType.OBJECT,
+            type: generative_ai_1.SchemaType.OBJECT,
             properties: {},
             required: []
         }
@@ -55,7 +58,7 @@ const functionDefinitions = [
         name: 'getCrazy',
         description: 'This tool will the craziest thing Ive ever done. use it when the user ask someting like : What the craziest thing youve ever done?',
         parameters: {
-            type: SchemaType.OBJECT,
+            type: generative_ai_1.SchemaType.OBJECT,
             properties: {},
             required: []
         }
@@ -64,7 +67,7 @@ const functionDefinitions = [
         name: 'getInternship',
         description: 'This tool shows my internship experience and achievements.',
         parameters: {
-            type: SchemaType.OBJECT,
+            type: generative_ai_1.SchemaType.OBJECT,
             properties: {},
             required: []
         }
@@ -73,18 +76,18 @@ const functionDefinitions = [
         name: 'getProjects',
         description: 'This tool shows my projects and achievements.',
         parameters: {
-            type: SchemaType.OBJECT,
+            type: generative_ai_1.SchemaType.OBJECT,
             properties: {},
             required: []
         }
     }
 ];
-export async function sendMessageToGemini(_chat, message) {
+async function sendMessageToGemini(_chat, message) {
     try {
         console.log('🔍 Sending message to Gemini (generateContent):', message);
         // Compose contents: system prompt + user message
         const contents = [
-            { role: 'user', parts: [{ text: SYSTEM_PROMPT }] },
+            { role: 'user', parts: [{ text: system_prompts_js_1.SYSTEM_PROMPT }] },
             { role: 'user', parts: [{ text: message }] }
         ];
         // Call Gemini with function calling config
