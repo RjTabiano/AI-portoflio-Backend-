@@ -1,5 +1,3 @@
-const app = require('../dist/index.js');
+import app from '../dist/src/index.js';
 
-export default function handler(req, res) {
-  return app.handle(req, res);
-}
+export default app;
