@@ -3,9 +3,9 @@ import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
-import { ENV, CORS_CONFIG, RATE_LIMIT_CONFIG, validateConfig } from "./config/index.js";
-import chatRouter from "./routes/chat.js";
-import type { HealthCheckResponse, ApiResponse } from "./types/index.js";
+import { ENV, CORS_CONFIG, RATE_LIMIT_CONFIG, validateConfig } from "./config";
+import chatRouter from "./routes/chat";
+import type { HealthCheckResponse, ApiResponse } from "./types";
 
 // Validate configuration on startup
 validateConfig();
@@ -41,6 +41,10 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Health check endpoint
+app.get('/', (req: Request, res: Response) => {
+  res.send('Express server is working on Vercel!');
+});
+
 app.get('/health', (req: Request, res: Response<HealthCheckResponse>) => {
   const healthResponse: HealthCheckResponse = {
     status: 'OK',
@@ -74,5 +78,5 @@ app.use('*', (req: Request, res: Response<ApiResponse>) => {
   res.status(404).json(notFoundResponse);
 });
 
-// Export for Vercel serverless functions
+// Export the app for Vercel serverless deployment
 export default app; 
