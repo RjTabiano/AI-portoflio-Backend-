@@ -45,6 +45,11 @@ app.get('/', (req: Request, res: Response) => {
   res.send('Express server is working on Vercel!');
 });
 
+app.get("/", (req, res) => {
+  res.send("Hello from Vercel!");
+});
+
+
 app.get('/health', (req: Request, res: Response<HealthCheckResponse>) => {
   const healthResponse: HealthCheckResponse = {
     status: 'OK',

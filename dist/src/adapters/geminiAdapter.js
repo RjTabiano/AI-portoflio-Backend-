@@ -1,150 +1,112 @@
 // src/adapters/geminiAdapter.ts
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai';
 import { MODEL_CONFIG, ENV } from '../config/index.js';
 import { SYSTEM_PROMPT } from '../prompts/system-prompts.js';
-import * as tools from '../tools/index.js';
 const genAI = new GoogleGenerativeAI(ENV.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel(MODEL_CONFIG);
 // Function definitions for tool calls - using Gemini's format
 const functionDefinitions = [
     {
         name: 'getContact',
-        description: 'Get contact information',
+        description: 'This tool show my contact informations.',
         parameters: {
-            type: 'object',
+            type: SchemaType.OBJECT,
             properties: {},
             required: []
         }
     },
     {
         name: 'getResume',
-        description: 'Get resume and professional experience',
+        description: 'This tool shows my resume and professional experience.',
         parameters: {
-            type: 'object',
+            type: SchemaType.OBJECT,
             properties: {},
             required: []
         }
     },
     {
         name: 'getPresentation',
-        description: 'Get detailed background and personal information',
+        description: 'This tool shows my detailed background and personal information.',
         parameters: {
-            type: 'object',
+            type: SchemaType.OBJECT,
             properties: {},
             required: []
         }
     },
     {
         name: 'getSkills',
-        description: 'Get technical skills and competencies',
+        description: 'This tool shows my technical skills and competencies.',
         parameters: {
-            type: 'object',
+            type: SchemaType.OBJECT,
             properties: {},
             required: []
         }
     },
     {
         name: 'getSport',
-        description: 'Get sports activities and fitness information',
+        description: 'This tool shows my sports activities and fitness information.',
         parameters: {
-            type: 'object',
+            type: SchemaType.OBJECT,
             properties: {},
             required: []
         }
     },
     {
         name: 'getCrazy',
-        description: 'Get the craziest thing about RJ',
+        description: 'This tool will the craziest thing Ive ever done. use it when the user ask someting like : What the craziest thing youve ever done?',
         parameters: {
-            type: 'object',
+            type: SchemaType.OBJECT,
             properties: {},
             required: []
         }
     },
     {
         name: 'getInternship',
-        description: 'Get internship experience and achievements',
+        description: 'This tool shows my internship experience and achievements.',
         parameters: {
-            type: 'object',
+            type: SchemaType.OBJECT,
             properties: {},
             required: []
         }
     },
     {
         name: 'getProjects',
-        description: 'Get projects and achievements',
+        description: 'This tool shows my projects and achievements.',
         parameters: {
-            type: 'object',
+            type: SchemaType.OBJECT,
             properties: {},
             required: []
         }
     }
 ];
-export function startChat() {
-    return model.startChat({
-        history: [
-            {
-                role: 'user',
-                parts: [{ text: SYSTEM_PROMPT }],
-            },
-            {
-                role: 'model',
-                parts: [{ text: "Hi! I'm RJ Tabiano, a Software Developer and Full Stack Engineer from the Philippines. I'm excited to help you and share my experiences with technology and development. What would you like to know about my work, projects, or how I can assist you?" }],
-            },
-        ],
-    });
-}
-export async function sendMessageToGemini(chat, message) {
+export async function sendMessageToGemini(_chat, message) {
     try {
-        console.log('🔍 Sending message to Gemini:', message);
-        // Send message
-        const result = await chat.sendMessage(message);
-        const response = await result.response;
+        console.log('🔍 Sending message to Gemini (generateContent):', message);
+        // Compose contents: system prompt + user message
+        const contents = [
+            { role: 'user', parts: [{ text: SYSTEM_PROMPT }] },
+            { role: 'user', parts: [{ text: message }] }
+        ];
+        // Call Gemini with function calling config
+        const result = await model.generateContent({
+            contents,
+            tools: [{ functionDeclarations: functionDefinitions }]
+        });
+        const response = result.response;
         const responseText = response.text();
         console.log('📝 Raw Gemini response:', responseText);
-        // Check if the response contains function calls
+        // Check for function calls
         const functionCalls = response.functionCalls();
         console.log('🔧 Function calls found:', functionCalls);
-        if (functionCalls && functionCalls.length > 0) {
-            console.log('⚙️ Processing function calls...');
-            // Process each function call
-            for (const functionCall of functionCalls) {
-                const toolName = functionCall.name;
-                console.log('🛠️ Function call name:', toolName);
-                // Check if the tool exists in our tools
-                if (toolName in tools) {
-                    console.log('✅ Tool found:', toolName);
-                    // @ts-ignore
-                    const tool = tools[toolName];
-                    if (tool && typeof tool.execute === 'function') {
-                        console.log('🚀 Executing tool:', toolName);
-                        // Execute the tool
-                        const toolResult = await tool.execute();
-                        console.log('📊 Tool result:', toolResult);
-                        const finalResponse = {
-                            response: responseText,
-                            tool_call: toolName,
-                            timestamp: new Date()
-                        };
-                        console.log('📤 Final response with tool call:', finalResponse);
-                        return finalResponse;
-                    }
-                }
-                else {
-                    console.log('❌ Tool not found:', toolName);
-                }
-            }
+        let tool_call = undefined;
+        if (functionCalls && functionCalls.length > 0 && functionCalls[0]) {
+            tool_call = functionCalls[0].name;
         }
-        else {
-            console.log('📝 No function calls, returning regular response');
-        }
-        // If no function calls or no matching tool call, return regular response
-        const regularResponse = {
-            response: responseText,
-            timestamp: new Date()
-        };
-        console.log('📤 Regular response:', regularResponse);
-        return regularResponse;
+        const finalResponse = tool_call
+            ? { response: responseText, tool_call, timestamp: new Date() }
+            : { response: responseText, timestamp: new Date() };
+        console.log('📤 Final response:', finalResponse);
+        return finalResponse;
     }
     catch (error) {
         console.error('❌ Error in sendMessageToGemini:', error);
