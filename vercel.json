@@ -6,6 +6,5 @@
       "use": "@vercel/node"
     }
   ],
-  "buildCommand": "sh vercel.sh",
-  "outputDirectory": ".vercel/output"
+  "buildCommand": "npm run build"
 }

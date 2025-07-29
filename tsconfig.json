@@ -21,7 +21,7 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "outDir": "./dist",
+    "outDir": "dist",
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {

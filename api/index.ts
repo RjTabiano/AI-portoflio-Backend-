@@ -1,6 +1,5 @@
-import app from '../src/index';
-import { IncomingMessage, ServerResponse } from 'http';
+const app = require('../dist/index.js');
 
-export default function handler(req: IncomingMessage, res: ServerResponse) {
-  (app as any).handle(req, res);
+export default function handler(req, res) {
+  return app.handle(req, res);
 }
