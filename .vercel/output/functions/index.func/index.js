@@ -1,4 +1,4 @@
-const app = require('../../../dist/src/index.js');
+const app = require('./dist/src/index.js');
 
 module.exports = (req, res) => {
   app.handle(req, res);
