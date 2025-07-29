@@ -22,4 +22,5 @@ build/
 # IDE files
 .vscode/
 .idea/
-.vercel
+.vercel/project.json
+.vercel/README.txt
