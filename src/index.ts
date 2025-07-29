@@ -3,9 +3,9 @@ import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
-import { ENV, CORS_CONFIG, RATE_LIMIT_CONFIG, validateConfig } from "./config/index";
-import chatRouter from "./routes/chat";
-import type { HealthCheckResponse, ApiResponse } from "./types/index";
+import { ENV, CORS_CONFIG, RATE_LIMIT_CONFIG, validateConfig } from "./config/index.ts";
+import chatRouter from "./routes/chat.ts";
+import type { HealthCheckResponse, ApiResponse } from "./types/index.ts";
 
 // Validate configuration on startup
 validateConfig();
