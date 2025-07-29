@@ -2,5 +2,5 @@ import app from '../src/index.js';
 import { IncomingMessage, ServerResponse } from 'http';
 
 export default function handler(req: IncomingMessage, res: ServerResponse) {
-  return app(req, res);
+  (app as any).handle(req, res); 
 }
