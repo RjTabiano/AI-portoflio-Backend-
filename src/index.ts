@@ -74,9 +74,5 @@ app.use('*', (req: Request, res: Response<ApiResponse>) => {
   res.status(404).json(notFoundResponse);
 });
 
-// Server start
-app.listen(ENV.PORT, () => {
-  console.log(`🚀 Server listening on http://localhost:${ENV.PORT}`);
-  console.log(`🌍 Environment: ${ENV.NODE_ENV}`);
-  console.log(`📝 TypeScript backend is running!`);
-}); 
+// Export for Vercel serverless functions
+export default app; 
