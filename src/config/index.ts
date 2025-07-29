@@ -61,7 +61,13 @@ export interface CorsConfig {
 }
 
 export const CORS_CONFIG: CorsConfig = {
-    origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : ['http://localhost:3000', 'http://localhost:5173'],
+    origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : [
+        'http://localhost:3000', 
+        'http://localhost:5173',
+        'https://ai-portfolio-ivory-beta.vercel.app',
+        'https://ai-portfolio-frontend.vercel.app',
+        'https://ai-portfolio.vercel.app'
+    ],
     credentials: true,
     optionsSuccessStatus: 200,
 };
