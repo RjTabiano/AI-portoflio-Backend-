@@ -22,7 +22,7 @@
     "declarationMap": true,
     "sourceMap": true,
     "outDir": "dist",
-    "rootDir": ".",
+    "rootDir": "src",
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
@@ -32,11 +32,7 @@
     }
   },
   "include": [
-    "src/**/*",
-    "config/**/*",
-    "prompts/**/*",
-    "routes/**/*",
-    "index.ts"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",
