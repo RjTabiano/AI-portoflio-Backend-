@@ -1,4 +1,4 @@
-const app = require('./app.js').default;
+const app = require('../../../../dist/index.js');
 
 module.exports = (req, res) => {
   app.handle(req, res);
