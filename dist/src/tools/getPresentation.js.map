@@ -1,1 +1,0 @@
-{"version":3,"file":"getPresentation.js","sourceRoot":"","sources":["../../../src/tools/getPresentation.ts"],"names":[],"mappings":"AAAA,MAAM,CAAC,MAAM,eAAe,GAAG;IAC7B,IAAI,EAAE,iBAAiB;IACvB,WAAW,EAAE,kEAAkE;IAC/E,OAAO,EAAE,KAAK,IAAI,EAAE;QAClB,OAAO,sFAAsF,CAAC;IAChG,CAAC;CACF,CAAC"}

@@ -1,1 +1,0 @@
-{"version":3,"file":"getContact.js","sourceRoot":"","sources":["../../../src/tools/getContact.ts"],"names":[],"mappings":"AAAA,MAAM,CAAC,MAAM,UAAU,GAAG;IACxB,IAAI,EAAE,YAAY;IAClB,WAAW,EAAE,0CAA0C;IACvD,OAAO,EAAE,KAAK,IAAI,EAAE;QAClB,OAAO,iGAAiG,CAAC;IAC3G,CAAC;CACF,CAAC"}
