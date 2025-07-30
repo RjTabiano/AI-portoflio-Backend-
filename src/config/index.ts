@@ -48,7 +48,7 @@ export const GENERATION_CONFIG: GenerationConfig = {
 
 // Model configuration
 export const MODEL_CONFIG: ModelConfig = {
-    model: "gemini-1.5-flash",
+    model: "gemini-2.5-flash",
     safetySettings: SAFETY_SETTINGS,
     generationConfig: GENERATION_CONFIG,
 };
