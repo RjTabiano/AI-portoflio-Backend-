@@ -59,38 +59,33 @@ const functionDefinitions: FunctionDeclaration[] = [
 export async function sendMessageToGemini(_chat: null, message: string): Promise<ChatResponse> {
   try {
     console.log('🔍 Sending message to Gemini (generateContent):', message);
-    
+    // Compose contents: system prompt + user message
     const contents = [
       { role: 'user', parts: [{ text: SYSTEM_PROMPT }] },
       { role: 'user', parts: [{ text: message }] }
     ];
-
+    // Call Gemini with function calling config
     const result = await model.generateContent({
       contents,
       tools: [{ functionDeclarations: functionDefinitions }]
     });
-
     const response = result.response;
+    const responseText = response.text();
+    console.log('📝 Raw Gemini response:', responseText);
+    // Check for function calls
     const functionCalls = response.functionCalls();
-    
-    let finalResponse: ChatResponse;
-
+    console.log('🔧 Function calls found:', functionCalls);
+    let tool_call: string | undefined = undefined;
     if (functionCalls && functionCalls.length > 0 && functionCalls[0]) {
-      // If a function call is found, use it as the primary response.
-      const tool_call = functionCalls[0].name;
-      console.log('🔧 Function call found:', tool_call);
-      finalResponse = { response: null, tool_call, timestamp: new Date() };
-    } else {
-      // If no function call, use the text response.
-      const responseText = response.text();
-      console.log('📝 Raw Gemini response:', responseText);
-      finalResponse = { response: responseText, timestamp: new Date() };
+      tool_call = functionCalls[0].name;
     }
-
+    const finalResponse: ChatResponse = tool_call
+      ? { response: responseText, tool_call, timestamp: new Date() }
+      : { response: responseText, timestamp: new Date() };
     console.log('📤 Final response:', finalResponse);
     return finalResponse;
   } catch (error) {
     console.error('❌ Error in sendMessageToGemini:', error);
     throw error;
   }
-}
+} 
