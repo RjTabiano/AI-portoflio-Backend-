@@ -38,8 +38,8 @@ export interface ChatRequest {
 }
 
 export interface ChatResponse {
-  response: string;
-  tool_call?: string;
+  response: string | null;
+  tool_call?: string | null;
   timestamp: Date;
 }
 
