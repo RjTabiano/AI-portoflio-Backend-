@@ -97,7 +97,7 @@ export async function sendMessageToGemini(_chat: null, message: string): Promise
                   text:
                     `User said: "${message}"\n` +
                     `You selected tool "${tool_call}".\n` +
-                    `Per the rules, reply in first-person as Rj with a short, engaging 1-2 sentence follow-up to keep the conversation going. ` +
+                    `Per the rules, reply in first-person as Rj with a short, engaging 1-3 sentence follow-up to keep the conversation going. ` +
                     `Do not call any tools in this turn.`
                 }]
               }
