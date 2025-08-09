@@ -59,33 +59,70 @@ const functionDefinitions: FunctionDeclaration[] = [
 export async function sendMessageToGemini(_chat: null, message: string): Promise<ChatResponse> {
   try {
     console.log('🔍 Sending message to Gemini (generateContent):', message);
+
     // Compose contents: system prompt + user message
     const contents = [
       { role: 'user', parts: [{ text: SYSTEM_PROMPT }] },
       { role: 'user', parts: [{ text: message }] }
     ];
+
     // Call Gemini with function calling config
     const result = await model.generateContent({
       contents,
       tools: [{ functionDeclarations: functionDefinitions }]
     });
+
     const response = result.response;
-    const responseText = response.text();
-    console.log('📝 Raw Gemini response:', responseText);
-    // Check for function calls
+    // Check for function calls first
     const functionCalls = response.functionCalls();
     console.log('🔧 Function calls found:', functionCalls);
-    let tool_call: string | undefined = undefined;
+
+    let finalResponse: ChatResponse;
+
     if (functionCalls && functionCalls.length > 0 && functionCalls[0]) {
-      tool_call = functionCalls[0].name;
+      // If a tool call is present, still include a short follow-up text per SYSTEM_PROMPT rules
+      const tool_call = functionCalls[0].name;
+
+      // Try to use model-provided text; if empty, dynamically ask for a follow-up without tools
+      let responseText = (response.text() || '').trim();
+
+      if (responseText.length === 0) {
+        try {
+          const followUp = await model.generateContent({
+            contents: [
+              { role: 'user', parts: [{ text: SYSTEM_PROMPT }] },
+              {
+                role: 'user',
+                parts: [{
+                  text:
+                    `User said: "${message}"\n` +
+                    `You selected tool "${tool_call}".\n` +
+                    `Per the rules, reply in first-person as Rj with a short, engaging 1-2 sentence follow-up to keep the conversation going. ` +
+                    `Do not call any tools in this turn.`
+                }]
+              }
+            ]
+          });
+          responseText = (followUp.response.text() || '').trim();
+        } catch (err) {
+          console.warn('⚠️ Secondary follow-up generation failed, will use fallback.', err);
+        }
+      }
+
+     
+      console.log('📤 Final response (tool + text):', { tool_call, responseText, timestamp: new Date() });
+      finalResponse = { response: responseText, tool_call, timestamp: new Date() };
+    } else {
+      // If no tool call, get the text response and set tool_call to null
+      const responseText = response.text();
+      console.log('📝 Raw Gemini response:', responseText);
+      console.log('📤 Final response (text):', { response: responseText, timestamp: new Date() });
+      finalResponse = { response: responseText, tool_call: null, timestamp: new Date() };
     }
-    const finalResponse: ChatResponse = tool_call
-      ? { response: responseText, tool_call, timestamp: new Date() }
-      : { response: responseText, timestamp: new Date() };
-    console.log('📤 Final response:', finalResponse);
+
     return finalResponse;
   } catch (error) {
     console.error('❌ Error in sendMessageToGemini:', error);
     throw error;
   }
-} 
+}

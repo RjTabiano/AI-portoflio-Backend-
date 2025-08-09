@@ -38,9 +38,9 @@ export interface ChatRequest {
 }
 
 export interface ChatResponse {
-  response: string;
-  tool_call?: string;
-  timestamp: Date;
+  response: string | null;
+  tool_call?: string | null;
+  timestamp: Date;
 }
 
 export interface ChatSessionData {
