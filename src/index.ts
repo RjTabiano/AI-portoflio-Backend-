@@ -22,7 +22,8 @@ app.use(cors({
     'http://localhost:5173',
     'https://ai-portfolio-ivory-beta.vercel.app',
     'https://ai-portfolio-rjtabianos-projects.vercel.app',
-    'https://ai-portfolio.vercel.app'
+    'https://ai-portfolio.vercel.app',
+    'https://rjtabiano-portfolio.vercel.app'
   ],
   credentials: true,
   optionsSuccessStatus: 200,
