@@ -23,12 +23,11 @@
     "sourceMap": true,
     "outDir": "dist",
     "rootDir": "src",
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@/config/*": ["config/*"],
-      "@/prompts/*": ["prompts/*"],
-      "@/routes/*": ["routes/*"]
+      "@/*": ["./src/*"],
+      "@/config/*": ["./config/*"],
+      "@/prompts/*": ["./prompts/*"],
+      "@/routes/*": ["./routes/*"]
     }
   },
   "include": [

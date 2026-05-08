@@ -48,10 +48,12 @@ export const GENERATION_CONFIG: GenerationConfig = {
 
 // Model configuration
 export const MODEL_CONFIG: ModelConfig = {
-    model: "gemini-2.5-flash",
+    model: "gemini-3-flash-preview",
     safetySettings: SAFETY_SETTINGS,
     generationConfig: GENERATION_CONFIG,
 };
+
+export const FALLBACK_MODELS = ["gemini-2.5-flash", "gemini-2.0-flash"] as const;
 
 // CORS configuration
 export interface CorsConfig {

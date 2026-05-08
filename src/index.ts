@@ -23,7 +23,9 @@ app.use(cors({
     'https://ai-portfolio-ivory-beta.vercel.app',
     'https://ai-portfolio-rjtabianos-projects.vercel.app',
     'https://ai-portfolio.vercel.app',
-    'https://rjtabiano-portfolio.vercel.app'
+    'https://rjtabiano-portfolio.vercel.app',
+    'https://rjtabiano.tech',
+    'https://www.rjtabiano.tech'
   ],
   credentials: true,
   optionsSuccessStatus: 200,
@@ -82,4 +84,10 @@ app.use('*', (req: Request, res: Response<ApiResponse>) => {
 });
 
 // Export the app for Vercel serverless deployment
-export default app; 
+export default app;
+
+if (ENV.NODE_ENV !== 'production') {
+  app.listen(ENV.PORT, () => {
+    console.log(`Server running on http://localhost:${ENV.PORT}`);
+  });
+} 

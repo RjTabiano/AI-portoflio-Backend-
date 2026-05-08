@@ -1,11 +1,49 @@
 // src/adapters/geminiAdapter.ts
 import { GoogleGenerativeAI, GenerativeModel, FunctionDeclaration, SchemaType } from '@google/generative-ai';
-import { MODEL_CONFIG, ENV } from '../config/index.js';
-import type { ChatMessage, FunctionDefinition, ChatResponse } from '../types/gemini.js';
+import { MODEL_CONFIG, FALLBACK_MODELS, ENV } from '../config/index.js';
+import type { ChatResponse } from '../types/gemini.js';
 import { SYSTEM_PROMPT } from '../prompts/system-prompts.js';
 
 const genAI = new GoogleGenerativeAI(ENV.GEMINI_API_KEY);
-const model: GenerativeModel = genAI.getGenerativeModel(MODEL_CONFIG);
+
+const modelChain: GenerativeModel[] = [
+  genAI.getGenerativeModel(MODEL_CONFIG),
+  ...FALLBACK_MODELS.map(m => genAI.getGenerativeModel({ ...MODEL_CONFIG, model: m })),
+];
+
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function generateWithFallback(
+  request: Parameters<GenerativeModel['generateContent']>[0]
+): ReturnType<GenerativeModel['generateContent']> {
+  let lastError: unknown;
+
+  for (const model of modelChain) {
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        return await model.generateContent(request);
+      } catch (err: unknown) {
+        const status = (err as { status?: number }).status;
+        const shouldFallback = status === 404;
+        const retryable = status === 503 || status === 429;
+        if (!retryable && !shouldFallback) throw err;
+        if (shouldFallback) break;
+        lastError = err;
+        if (attempt < 3) {
+          const delay = Math.pow(2, attempt - 1) * 1000;
+          console.warn(`⚠️ ${(model as unknown as { model: string }).model} attempt ${attempt}/3 (${status}), retrying in ${delay}ms...`);
+          await sleep(delay);
+        } else {
+          console.warn(`⚠️ ${(model as unknown as { model: string }).model} exhausted retries, trying next model...`);
+        }
+      }
+    }
+  }
+
+  throw lastError;
+}
 
 // Function definitions for tool calls - using Gemini's format
 const functionDefinitions: FunctionDeclaration[] = [
@@ -67,7 +105,7 @@ export async function sendMessageToGemini(_chat: null, message: string): Promise
     ];
 
     // Call Gemini with function calling config
-    const result = await model.generateContent({
+    const result = await generateWithFallback({
       contents,
       tools: [{ functionDeclarations: functionDefinitions }]
     });
@@ -88,7 +126,7 @@ export async function sendMessageToGemini(_chat: null, message: string): Promise
 
       if (responseText.length === 0) {
         try {
-          const followUp = await model.generateContent({
+          const followUp = await generateWithFallback({
             contents: [
               { role: 'user', parts: [{ text: SYSTEM_PROMPT }] },
               {
